@@ -32,6 +32,14 @@ const signupUserIntroDB = async (payload: TUser) => {
   //   return null
 }
 
+
+// login user
+const loginUserIntoDB = async (payload: TUser) => {
+    console.log("login user", payload);
+    
+}
+
 export const AuthService = {
   signupUserIntroDB,
+  loginUserIntoDB
 }

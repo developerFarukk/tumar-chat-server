@@ -28,6 +28,20 @@ const signupUserValidationSchema = z.object({
 //   }),
 })
 
+
+// Signup User Validation
+const loginUserValidationSchema = z.object({
+    email: z
+      .string()
+      .min(1, { message: 'Email is required.' })
+      .email({ message: 'Please provide a valid email address.' }),
+    password: z
+      .string()
+      .min(4, { message: 'Password must be at least 4 characters long.' })
+      .max(20, { message: 'Password cannot exceed 20 characters.' }),
+})
+
 export const UserValidation = {
   signupUserValidationSchema,
+  loginUserValidationSchema
 }
