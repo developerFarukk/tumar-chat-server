@@ -17,6 +17,7 @@ const userSchema = new Schema<TUser, UserModel>(
       required: [true, 'user Email is required'],
       unique: true,
       trim: true,
+      loadClass: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
     },
     password: {
@@ -72,6 +73,12 @@ const userSchema = new Schema<TUser, UserModel>(
 // Pre-save hook for hashing password
 userSchema.pre('save', async function (next) {
   const user = this as TUser & Document
+
+  // শুধুমাত্র পাসওয়ার্ড পরিবর্তন হলে হ্যাশ করবে
+  if (!user.isModified('password')) {
+    return next()
+  }
+
   user.password = await bcrypt.hash(
     user.password,
     Number(config.bcrypt_salt_rounds)
@@ -79,20 +86,15 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
-// Post-save hook for setting password to empty string
-userSchema.post('save', function (doc, next) {
-  ;(doc as TUser & Document).password = ''
-  next()
-})
-
-// Static method to get public user data
-userSchema.statics.getPublicUserData = function (userId: string) {
-  return this.findById(userId).select('id name email address number image')
-}
-
 // Static method to check if user exists by email
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password')
+  // এখানে this ব্যবহার করুন, User নয়
+  return await this.findOne({ email }).select('+password')
+}
+
+// Static method to get public user data
+userSchema.statics.getPublicUserData = function (email: string) {
+  return this.findOne({ email }).select('_id name email address number image')
 }
 
 // Static method to check if password matches

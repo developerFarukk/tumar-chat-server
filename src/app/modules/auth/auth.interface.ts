@@ -18,11 +18,11 @@ export interface TUser {
 
 export interface UserModel extends Model<TUser> {
     
-    isUserExistsByEmail(id: string): Promise<TUser>;
+    isUserExistsByEmail(email: string): Promise<TUser>;
     
     // checkUserExist(userId: string): Promise<TUser>;
 
-    getPublicUserData(userId: string): Promise<Pick<TUser, '_id' | 'name' | 'email' | 'number' | 'address' | 'image'>>;
+    getPublicUserData(email: string): Promise<Pick<TUser, '_id' | 'name' | 'email' | 'number' | 'address' | 'image'>>;
 
     //instance methods for checking if passwords are matched
     isPasswordMatched(
