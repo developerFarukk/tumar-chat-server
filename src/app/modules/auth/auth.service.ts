@@ -1,7 +1,9 @@
+import config from '../../config'
 import AppError from '../../errors/AppError'
-import { TUser } from './auth.interface'
+import { TAuth, TJwtPayload, TUser } from './auth.interface'
 import { User } from './auth.model'
 import httpStatus from 'http-status'
+import { createToken } from './auth.utils'
 
 // Signup user intro to DB
 const signupUserIntroDB = async (payload: TUser) => {
@@ -31,7 +33,7 @@ const signupUserIntroDB = async (payload: TUser) => {
 }
 
 // login user
-const loginUserIntoDB = async (payload: TUser) => {
+const loginUserIntoDB = async (payload: TAuth) => {
   const user = await User.isUserExistsByEmail(payload?.email)
 
   if (!user) {
@@ -47,11 +49,30 @@ const loginUserIntoDB = async (payload: TUser) => {
     throw new AppError(httpStatus.FORBIDDEN, 'Invalid credentials!')
   }
 
-  const result = await User.getPublicUserData(user?.email)
+  const userData = await User.getPublicUserData(user?.email)
 
-  //   console.log('login user', user)
+  const jwtPayload: TJwtPayload = {
+    // _id: userData?._id as string,
+    name: userData?.name as string,
+    email: userData?.email as string,
+    // role: user.role,
+    image: userData?.image as string,
+    // status: user?.status,
+    address: userData?.address,
+    number: userData?.number,
+  }
 
-  return result
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  )
+
+//   console.log('login user', accessToken)
+
+  return {
+    AccessToken: accessToken
+  }
 }
 
 export const AuthService = {
