@@ -23,7 +23,8 @@ const userSchema = new Schema<TUser, UserModel>(
     password: {
       type: String,
       required: [true, 'Password id is required'],
-      unique: true,
+      minlength: [4, 'Password must be at least 4 characters'],
+      maxlength: [28, 'Password must not exceed 28 characters'],
       select: 0,
       trim: true,
     },
@@ -74,7 +75,6 @@ const userSchema = new Schema<TUser, UserModel>(
 userSchema.pre('save', async function (next) {
   const user = this as TUser & Document
 
-  // শুধুমাত্র পাসওয়ার্ড পরিবর্তন হলে হ্যাশ করবে
   if (!user.isModified('password')) {
     return next()
   }
@@ -88,7 +88,6 @@ userSchema.pre('save', async function (next) {
 
 // Static method to check if user exists by email
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  // এখানে this ব্যবহার করুন, User নয়
   return await this.findOne({ email }).select('+password')
 }
 
