@@ -8,7 +8,7 @@ import httpStatus from 'http-status';
 // Signup user controller
 const signUpUser = catchAsync(async (req, res) => {
 
-    const result = await AuthService.signupUserIntroDB();
+    const result = await AuthService.signupUserIntroDB(req.body);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
