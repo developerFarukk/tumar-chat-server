@@ -84,9 +84,27 @@ const updateUser = catchAsync(async (req, res) => {
     });
 });
 
+
+// Change Password by user
+const userPasswordChange = catchAsync(async (req, res) => {
+
+    const { email } = req.user as TJwtPayload;
+
+    const result = await AuthService.userPasswordChangeIntoDB(email, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Password is changed successfully',
+        data: result,
+    });
+});
+
+
 export const AuthController = {
   signUpUser,
   logInUser,
   logOutUser,
-  updateUser
+  updateUser,
+  userPasswordChange
 }

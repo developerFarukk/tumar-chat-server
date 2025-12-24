@@ -7,6 +7,7 @@ import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
 import { sendWelcomeEmail } from '../../email/emailHandlers'
 import jwt, { JwtPayload } from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 // Signup user intro to DB
 const signupUserIntroDB = async (payload: TUser) => {
@@ -88,7 +89,6 @@ const loginUserIntoDB = async (payload: TAuth) => {
 
 // LogOut user
 const logOutuserIntoDB = async (token: string) => {
-
   let decoded
 
   // checking if the given token is valid
@@ -102,8 +102,8 @@ const logOutuserIntoDB = async (token: string) => {
   }
 
   const { exp } = decoded
-  
-  const expireToken = exp ? new Date(exp * 1000) : new Date();
+
+  const expireToken = exp ? new Date(exp * 1000) : new Date()
 
   if (expireToken < new Date()) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'Token has expired')
@@ -114,29 +114,70 @@ const logOutuserIntoDB = async (token: string) => {
 
 // Update User
 const updateUserIntoDB = async (email: string, payload: Partial<TUser>) => {
+  const existingUser = await User.findOne({ email: email })
 
-    const existingUser = await User.findOne({email: email});
+  if (!existingUser) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User is not found!')
+  }
 
-    if (!existingUser) {
-        throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
+  const result = await User.findOneAndUpdate({ email: email }, payload, {
+    new: true,
+  })
+  return result
+}
+
+// Change Password by user
+const userPasswordChangeIntoDB = async (
+  email: string,
+  payload: { oldPassword: string; newPassword: string }
+) => {
+
+  const { oldPassword, newPassword } = payload
+
+  // // Find the user by email and select the password field
+  const user = await User.findOne({ email: email }).select('+password')
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found!')
+  }
+
+  // if (user.status === 'blocked') {
+  //     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
+  // }
+
+  // if (user.isDeleted) {
+  //     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted!');
+  // }
+
+  // // Compare the old password with the hashed password in the database
+  const isPasswordMatch = await bcrypt.compare(oldPassword, user?.password)
+
+  if (!isPasswordMatch) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Old password is incorrect!')
+  }
+
+  const newHashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds)
+  )
+
+  await User.findOneAndUpdate(
+    {
+      email: email,
+    },
+    {
+      password: newHashedPassword,
+      passwordChangedAt: new Date(),
     }
+  )
 
-    const result = await User.findOneAndUpdate(
-        { email: email },
-        payload,
-        {
-            new: true,
-        },
-    );
-    return result;
-
-};
-
-
+  return null
+}
 
 export const AuthService = {
   signupUserIntroDB,
   loginUserIntoDB,
   logOutuserIntoDB,
-  updateUserIntoDB
+  updateUserIntoDB,
+  userPasswordChangeIntoDB,
 }

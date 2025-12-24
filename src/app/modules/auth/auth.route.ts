@@ -35,4 +35,12 @@ router.patch(
     AuthController.updateUser
 );
 
+// Change Password by user
+router.patch(
+    '/change-password', 
+    auth(),
+    validateRequest(UserValidation.userPasswordChangeValidationSchema),
+    AuthController.userPasswordChange
+);
+
 export const AuthRoutes = router
