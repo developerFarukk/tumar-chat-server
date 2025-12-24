@@ -1,3 +1,4 @@
+import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthService } from "./auth.service";
@@ -23,6 +24,15 @@ const signUpUser = catchAsync(async (req, res) => {
 const logInUser = catchAsync(async (req, res) => {
 
     const result = await AuthService.loginUserIntoDB(req.body);
+
+    const accessToken = result?.AccessToken
+    
+    res.cookie('accessToken', accessToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: config.node_env === 'development' ? false : true,
+    });
 
     sendResponse(res, {
         statusCode: httpStatus.OK,

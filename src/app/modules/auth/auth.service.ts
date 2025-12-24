@@ -4,9 +4,11 @@ import { TAuth, TJwtPayload, TUser } from './auth.interface'
 import { User } from './auth.model'
 import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
+import { sendWelcomeEmail } from '../../email/emailHandlers'
 
 // Signup user intro to DB
 const signupUserIntroDB = async (payload: TUser) => {
+
   // Check if the user already exists by email
   const existingUser = await User.findOne({ email: payload?.email })
 
@@ -28,6 +30,15 @@ const signupUserIntroDB = async (payload: TUser) => {
   const publicUserData = await User.create(payload)
 
   const result = await User.getPublicUserData(publicUserData?.email)
+
+  if (!config.client_url) {
+    throw new Error('Client URL is not configured')
+  }
+  
+
+  if (result) {
+    await sendWelcomeEmail(result?.email, result?.name, config.client_url)
+  }
 
   return result
 }
@@ -68,10 +79,10 @@ const loginUserIntoDB = async (payload: TAuth) => {
     config.jwt_access_expires_in as string
   )
 
-//   console.log('login user', accessToken)
+  //   console.log('login user', accessToken)
 
   return {
-    AccessToken: accessToken
+    AccessToken: accessToken as string,
   }
 }
 
