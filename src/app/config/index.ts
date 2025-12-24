@@ -21,5 +21,13 @@ export default {
     resend_api_key: process.env.RESEND_API_KEY,
 
     email_from: process.env.EMAIL_FROM,
-    email_from_name: process.env.EMAIL_FROM_NAME
+    email_from_name: process.env.EMAIL_FROM_NAME,
+
+    cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+    cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+
+    arcjet_api_key: process.env.ARCJET_API_KEY,
+    arcjet_environment: process.env.ARCJET_ENVIRONMENT,
+
 }
