@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 
@@ -11,15 +10,22 @@ export const arcjetProtection = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  const originalUser = (req as any).user
+
   try {
     const decision = await aj.protect(req)
 
+    // Restore user
+    if (originalUser) {
+      ;(req as any).user = originalUser
+    }
+
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        res 
+        res
           .status(429)
           .json({ message: 'Rate limit exceeded. Please try again later.' })
-        return 
+        return
       } else if (decision.reason.isBot()) {
         res.status(403).json({ message: 'Bot access denied.' })
         return

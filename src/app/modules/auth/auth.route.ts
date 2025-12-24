@@ -3,12 +3,14 @@ import { AuthController } from './auth.controller'
 import validateRequest from '../../middlewares/validateRequest'
 import { UserValidation } from './auth.validation'
 import auth from '../../middlewares/auth'
+import { arcjetProtection } from '../../middlewares/arcjet.middleware'
 
 const router = express.Router()
 
 // Signup user route
 router.post(
   '/signup',
+  arcjetProtection,
   AuthController.signUpUser,
   validateRequest(UserValidation.signupUserValidationSchema)
 )
@@ -16,6 +18,7 @@ router.post(
 // login user route
 router.post(
   '/login',
+  arcjetProtection,
   AuthController.logInUser,
   validateRequest(UserValidation.loginUserValidationSchema)
 )

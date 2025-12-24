@@ -64,7 +64,7 @@ const loginUserIntoDB = async (payload: TAuth) => {
   const userData = await User.getPublicUserData(user?.email)
 
   const jwtPayload: TJwtPayload = {
-    // _id: userData?._id as string,
+    _id: userData?._id as string,
     name: userData?.name as string,
     email: userData?.email as string,
     // role: user.role,

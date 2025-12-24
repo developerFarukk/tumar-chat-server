@@ -38,7 +38,7 @@ export interface TAuth {
 }
 
 export interface TJwtPayload {
-    // _id: string;
+    _id: string;
     name: string;
     email: string;
     // role: UserRole;

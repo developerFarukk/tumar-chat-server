@@ -7,6 +7,9 @@ import httpStatus from 'http-status'
 // get All user controller
 const getAllContacts = catchAsync(async (req, res) => {
 
+    console.log("ppp", req.user);
+    
+
   const result = await MessageService.getAllContactsIntoDB()
 
   sendResponse(res, {
