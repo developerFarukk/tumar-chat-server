@@ -2,6 +2,7 @@ import express from 'express'
 import { AuthController } from './auth.controller'
 import validateRequest from '../../middlewares/validateRequest'
 import { UserValidation } from './auth.validation'
+import auth from '../../middlewares/auth'
 
 const router = express.Router()
 
@@ -17,6 +18,13 @@ router.post(
   '/login',
   AuthController.logInUser,
   validateRequest(UserValidation.loginUserValidationSchema)
+)
+
+// logout user route
+router.post(
+  '/logout',
+  auth(),
+  AuthController.logOutUser,
 )
 
 export const AuthRoutes = router

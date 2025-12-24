@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import config from '../../config'
 import AppError from '../../errors/AppError'
 import { TAuth, TJwtPayload, TUser } from './auth.interface'
@@ -5,10 +6,10 @@ import { User } from './auth.model'
 import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
 import { sendWelcomeEmail } from '../../email/emailHandlers'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 // Signup user intro to DB
 const signupUserIntroDB = async (payload: TUser) => {
-
   // Check if the user already exists by email
   const existingUser = await User.findOne({ email: payload?.email })
 
@@ -34,7 +35,6 @@ const signupUserIntroDB = async (payload: TUser) => {
   if (!config.client_url) {
     throw new Error('Client URL is not configured')
   }
-  
 
   if (result) {
     await sendWelcomeEmail(result?.email, result?.name, config.client_url)
@@ -86,7 +86,36 @@ const loginUserIntoDB = async (payload: TAuth) => {
   }
 }
 
+// LogOut user
+const logOutuserIntoDB = async (token: string) => {
+
+  let decoded
+
+  // checking if the given token is valid
+  try {
+    decoded = jwt.verify(
+      token,
+      config.jwt_access_secret as string
+    ) as JwtPayload
+  } catch (err) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Unautorized')
+  }
+
+  const { exp } = decoded
+  
+  const expireToken = exp ? new Date(exp * 1000) : new Date();
+
+  if (expireToken < new Date()) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Token has expired')
+  }
+
+  return null
+}
+
+
+
 export const AuthService = {
   signupUserIntroDB,
   loginUserIntoDB,
+  logOutuserIntoDB,
 }
