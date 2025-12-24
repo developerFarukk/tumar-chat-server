@@ -29,7 +29,7 @@ const signupUserValidationSchema = z.object({
 })
 
 
-// Signup User Validation
+// Login User Validation
 const loginUserValidationSchema = z.object({
     email: z
       .string()
@@ -41,7 +41,27 @@ const loginUserValidationSchema = z.object({
       .max(20, { message: 'Password cannot exceed 20 characters.' }),
 })
 
+// Update User Validation
+const updateUserValidationSchema = z.object({
+//   body: z.object({
+    name: z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters long.' })
+      .max(100, { message: 'Name cannot exceed 100 characters.' })
+      .optional(),
+    address: z
+      .string()
+      .min(3, { message: 'Address must be at least 3 characters long.' })
+      .max(200, { message: 'Address cannot exceed 200 characters.' })
+      .optional(),
+//   }),
+})
+
+
+
+
 export const UserValidation = {
   signupUserValidationSchema,
-  loginUserValidationSchema
+  loginUserValidationSchema,
+  updateUserValidationSchema
 }

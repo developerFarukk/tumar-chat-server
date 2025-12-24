@@ -27,4 +27,12 @@ router.post(
   AuthController.logOutUser,
 )
 
+// Update User
+router.patch(
+    '/update-user',
+    auth(),
+    validateRequest(UserValidation.updateUserValidationSchema),
+    AuthController.updateUser
+);
+
 export const AuthRoutes = router

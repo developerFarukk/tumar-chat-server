@@ -112,10 +112,31 @@ const logOutuserIntoDB = async (token: string) => {
   return null
 }
 
+// Update User
+const updateUserIntoDB = async (email: string, payload: Partial<TUser>) => {
+
+    const existingUser = await User.findOne({email: email});
+
+    if (!existingUser) {
+        throw new AppError(httpStatus.NOT_FOUND, 'User is not found!');
+    }
+
+    const result = await User.findOneAndUpdate(
+        { email: email },
+        payload,
+        {
+            new: true,
+        },
+    );
+    return result;
+
+};
+
 
 
 export const AuthService = {
   signupUserIntroDB,
   loginUserIntoDB,
   logOutuserIntoDB,
+  updateUserIntoDB
 }

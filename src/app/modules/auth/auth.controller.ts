@@ -2,6 +2,7 @@ import config from '../../config'
 import AppError from '../../errors/AppError'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
+import { TJwtPayload } from './auth.interface'
 import { AuthService } from './auth.service'
 import httpStatus from 'http-status'
 
@@ -67,8 +68,25 @@ const logOutUser = catchAsync(async (req, res) => {
   })
 })
 
+
+// Update user
+const updateUser = catchAsync(async (req, res) => {
+
+    const { email } = req.user as TJwtPayload;
+
+    const result = await AuthService.updateUserIntoDB(email, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User is updated succesfully',
+        data: result,
+    });
+});
+
 export const AuthController = {
   signUpUser,
   logInUser,
   logOutUser,
+  updateUser
 }
