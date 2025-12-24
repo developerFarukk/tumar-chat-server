@@ -1,29 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
 import config from "../config";
 
+const isProduction = config.node_env === 'production';
 
 const aj = arcjet({
   key: config.arcjet_api_key as string,
+  
   rules: [
-    // Shield protects your app from common attacks e.g. SQL injection
-    shield({ mode: "LIVE" }),
-    // Create a bot detection rule
-    detectBot({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      // Block all bots except the following
-      allow: [
-        "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
-        // Uncomment to allow these other common bot categories
-        // See the full list at https://arcjet.com/bot-list
-        //"CATEGORY:MONITOR", // Uptime monitoring services
-        //"CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
-      ],
+    shield({ 
+      mode: isProduction ? "LIVE" : "DRY_RUN" 
     }),
-    // Create a token bucket rate limit. Other algorithms are supported.
+    
+    detectBot({
+      mode: isProduction ? "LIVE" : "DRY_RUN",
+      allow: (isProduction 
+        ? [
+            "CATEGORY:SEARCH_ENGINE",
+            "CATEGORY:SAFARI",
+            "CATEGORY:CHROME",
+            "CATEGORY:FIREFOX", 
+            "CATEGORY:EDGE",
+            "CATEGORY:MOBILE_APP",
+            "POSTMAN",
+            "INSOMNIA",
+            "CURL",
+            "CATEGORY:MONITOR",
+            "CATEGORY:PREVIEW",
+          ]
+        : []
+      ) as any,
+    }),
+    
     slidingWindow({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      max: 100,
+      mode: isProduction ? "LIVE" : "DRY_RUN",
+      max: isProduction ? 100 : 1000,
       interval: 60,
     }),
   ],
