@@ -81,12 +81,18 @@ const getChatePartnerIntoDB = async (loggedInUserId: string) => {
 
 // Get message by user Id
 const getmessageByUserIdIntoDB = async (
-  userId: string,
+  myId: string,
   userToChatId: string
 ) => {
-  console.log(userId, userToChatId)
 
-  return 'chate message data by user id'
+  const messages = await Message.find({
+    $or: [
+      { senderId: myId, receiverId: userToChatId },
+      { senderId: userToChatId, receiverId: myId },
+    ],
+  })
+
+  return messages
 }
 
 export const MessageService = {

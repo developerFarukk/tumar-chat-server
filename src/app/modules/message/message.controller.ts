@@ -58,11 +58,11 @@ const getChatPartner = catchAsync(async (req, res) => {
 // get message by user Id
 const getmessageByUserId = catchAsync(async (req, res) => {
 
-  const userId = req.user?._id
+  const myId = req.user?._id
 
   const { id: userToChatId } = req.params
 
-  const result = await MessageService.getmessageByUserIdIntoDB(userId, userToChatId)
+  const result = await MessageService.getmessageByUserIdIntoDB(myId, userToChatId)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
