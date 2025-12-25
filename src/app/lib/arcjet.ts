@@ -6,14 +6,14 @@ import config from '../config'
 
 const isProduction = config.node_env === 'production'
 
-if (config.node_env === 'development') {
-  console.log = (...args) => {
-    // Arcjet এর specific warning skip করুন
-    if (!args[0]?.includes?.('Arcjet will use 127.0.0.1')) {
-      process.stdout.write(args.join(' ') + '\n')
-    }
-  }
-}
+// if (config.node_env === 'development') {
+//   console.log = (...args) => {
+//     // Arcjet এর specific warning skip করুন
+//     if (!args[0]?.includes?.('Arcjet will use 127.0.0.1')) {
+//       process.stdout.write(args.join(' ') + '\n')
+//     }
+//   }
+// }
 
 const aj = arcjet({
   key: config.arcjet_api_key as string,
