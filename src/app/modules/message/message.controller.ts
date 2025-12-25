@@ -1,19 +1,14 @@
-import catchAsync from "../../utils/catchAsync"
-import sendResponse from "../../utils/sendResponse"
-import { MessageService } from "./message.service"
+import catchAsync from '../../utils/catchAsync'
+import sendResponse from '../../utils/sendResponse'
+import { MessageService } from './message.service'
 import httpStatus from 'http-status'
-
 
 // get All user controller
 const getAllContacts = catchAsync(async (req, res) => {
 
-    console.log("ppp", req.user);
-
-    console.log("body", req.body);
-    
-    
-
-  const result = await MessageService.getAllContactsIntoDB()
+  const userId = req.user?._id as string
+  
+  const result = await MessageService.getAllContactsIntoDB(userId)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -22,7 +17,6 @@ const getAllContacts = catchAsync(async (req, res) => {
     data: result,
   })
 })
-
 
 export const MessageController = {
   getAllContacts,

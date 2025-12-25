@@ -1,9 +1,17 @@
 import express from 'express'
 import { MessageController } from './message.controller'
 import auth from '../../middlewares/auth'
+// import validateRequest from '../../middlewares/validateRequest'
+// import { MessageValidation } from './message.validation'
 
 const router = express.Router()
 
-router.get('/all-contacts', auth(),  MessageController.getAllContacts)
+// Get all user route
+router.get(
+  '/all-contacts',
+  auth(),
+  //   validateRequest(MessageValidation.messageSchema),
+  MessageController.getAllContacts
+)
 
 export const MessageRoutes = router
