@@ -6,6 +6,11 @@ import { MessageValidation } from './message.validation'
 
 const router = express.Router()
 
+
+
+// Get all user route
+router.get('/all-contacts', auth(), MessageController.getAllContacts)
+
 // send message route
 router.post(
   '/send-message/:id',
@@ -14,7 +19,10 @@ router.post(
   MessageController.sendMessage
 )
 
-// Get all user route
-router.get('/all-contacts', auth(), MessageController.getAllContacts)
+// get chat partner route
+router.get('/chat-partner', auth(), MessageController.getChatPartner)
+
+// get message by user Id route
+router.get('/chat/:id', auth(), MessageController.getmessageByUserId)
 
 export const MessageRoutes = router

@@ -3,6 +3,22 @@ import sendResponse from '../../utils/sendResponse'
 import { MessageService } from './message.service'
 import httpStatus from 'http-status'
 
+
+
+// get All user controller
+const getAllContacts = catchAsync(async (req, res) => {
+  const userId = req.user?.email as string
+
+  const result = await MessageService.getAllContactsIntoDB(userId)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'All contacts retrieved successfully',
+    data: result,
+  })
+})
+
 // send message controller
 const sendMessage = catchAsync(async (req, res) => {
   const { id: receiverId } = req.params
@@ -23,16 +39,35 @@ const sendMessage = catchAsync(async (req, res) => {
   })
 })
 
-// get All user controller
-const getAllContacts = catchAsync(async (req, res) => {
-  const userId = req.user?.email as string
+// get Chat pertner
+const getChatPartner = catchAsync(async (req, res) => {
 
-  const result = await MessageService.getAllContactsIntoDB(userId)
+  const loggedInUserId = req.user?._id
+
+  const result = await MessageService.getChatePartnerIntoDB(loggedInUserId)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'All contacts retrieved successfully',
+    message: 'Chat partner data retrieved successfully',
+    data: result,
+  })
+})
+
+
+// get message by user Id
+const getmessageByUserId = catchAsync(async (req, res) => {
+
+  const userId = req.user?._id
+
+  const { id: userToChatId } = req.params
+
+  const result = await MessageService.getmessageByUserIdIntoDB(userId, userToChatId)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'user chat list by id successfully',
     data: result,
   })
 })
@@ -40,4 +75,6 @@ const getAllContacts = catchAsync(async (req, res) => {
 export const MessageController = {
   getAllContacts,
   sendMessage,
+  getChatPartner,
+  getmessageByUserId
 }

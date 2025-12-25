@@ -4,13 +4,21 @@ import { TMessage } from './message.interface'
 import httpStatus from 'http-status'
 import { Message } from './message.model'
 
+// Get All Contacts Service
+const getAllContactsIntoDB = async (userId: string) => {
+  const filteredUsers = await User.find({ email: { $ne: userId } }).select(
+    '-password'
+  )
+
+  return filteredUsers
+}
+
 // Send message by user
 const sendMessageIntoDB = async (
   senderId: string,
   receiverId: string,
   payload: TMessage
 ) => {
-
   const receiverExists = await User.findById({ _id: receiverId })
 
   if (!receiverExists) {
@@ -28,7 +36,7 @@ const sendMessageIntoDB = async (
     throw new AppError(httpStatus.BAD_REQUEST, 'Text or image is required.')
   }
 
-  const message ={
+  const message = {
     senderId: senderId,
     receiverId: receiverId,
     text: payload?.text,
@@ -47,16 +55,43 @@ const sendMessageIntoDB = async (
   return newMessage
 }
 
-// Get All Contacts Service
-const getAllContactsIntoDB = async (userId: string) => {
-  const filteredUsers = await User.find({ email: { $ne: userId } }).select(
+// Get chate partner
+const getChatePartnerIntoDB = async (loggedInUserId: string) => {
+  // find all the messages where the logged-in user is either sender or receiver
+  const messages = await Message.find({
+    $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+  })
+
+  const chatPartnerIds = [
+    ...new Set(
+      messages.map((msg) =>
+        msg.senderId.toString() === loggedInUserId.toString()
+          ? msg.receiverId.toString()
+          : msg.senderId.toString()
+      )
+    ),
+  ]
+
+  const chatPartners = await User.find({ _id: { $in: chatPartnerIds } }).select(
     '-password'
   )
 
-  return filteredUsers
+  return chatPartners
+}
+
+// Get message by user Id
+const getmessageByUserIdIntoDB = async (
+  userId: string,
+  userToChatId: string
+) => {
+  console.log(userId, userToChatId)
+
+  return 'chate message data by user id'
 }
 
 export const MessageService = {
   getAllContactsIntoDB,
   sendMessageIntoDB,
+  getChatePartnerIntoDB,
+  getmessageByUserIdIntoDB,
 }
