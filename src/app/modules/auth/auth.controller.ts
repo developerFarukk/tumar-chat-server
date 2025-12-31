@@ -1,5 +1,5 @@
 import config from '../../config'
-import AppError from '../../errors/AppError'
+// import AppError from '../../errors/AppError'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { TJwtPayload } from './auth.interface'
@@ -41,70 +41,74 @@ const logInUser = catchAsync(async (req, res) => {
 
 // Logout User Controller
 const logOutUser = catchAsync(async (req, res) => {
-  const token =
-    req.cookies?.accessToken ||
-    req.headers.authorization?.replace('accessToken', '') ||
-    req.body?.token
+  // const token =
+  //   req.cookies?.accessToken ||
+  //   req.headers.authorization?.replace('accessToken', '') ||
+  //   req.body?.token
 
-  if (!token) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!')
-  }
+  // if (!token) {
+  //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!')
+  // }
 
-  // const result = await AuthService.loginUserIntoDB(req.body);
-  const result = await AuthService.logOutuserIntoDB(token)
+  // // const result = await AuthService.loginUserIntoDB(req.body);
+  // const result = await AuthService.logOutuserIntoDB(token)
+
+  // res.clearCookie('accessToken', {
+  //     maxAge: 0,
+  //     httpOnly: true,
+  //     sameSite: 'none',
+  //     secure: config.node_env === 'development' ? false : true,
+  // });
 
   res.clearCookie('accessToken', {
-      maxAge: 0,
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: config.node_env === 'development' ? false : true,
-  });
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: config.node_env === 'development' ? false : true,
+    path: '/',
+    expires: new Date(0)
+  })
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Logged out successfully',
+    // data: result,
+    data: null,
+  })
+})
+
+// Update user
+const updateUser = catchAsync(async (req, res) => {
+  const { email } = req.user as TJwtPayload
+
+  const result = await AuthService.updateUserIntoDB(email, req.body)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User is updated succesfully',
     data: result,
   })
 })
 
-
-// Update user
-const updateUser = catchAsync(async (req, res) => {
-
-    const { email } = req.user as TJwtPayload;
-
-    const result = await AuthService.updateUserIntoDB(email, req.body);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'User is updated succesfully',
-        data: result,
-    });
-});
-
-
 // Change Password by user
 const userPasswordChange = catchAsync(async (req, res) => {
+  const { email } = req.user as TJwtPayload
 
-    const { email } = req.user as TJwtPayload;
+  const result = await AuthService.userPasswordChangeIntoDB(email, req.body)
 
-    const result = await AuthService.userPasswordChangeIntoDB(email, req.body);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Password is changed successfully',
-        data: result,
-    });
-});
-
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password is changed successfully',
+    data: result,
+  })
+})
 
 export const AuthController = {
   signUpUser,
   logInUser,
   logOutUser,
   updateUser,
-  userPasswordChange
+  userPasswordChange,
 }

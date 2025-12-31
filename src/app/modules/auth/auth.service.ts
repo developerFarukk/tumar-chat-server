@@ -88,26 +88,27 @@ const loginUserIntoDB = async (payload: TAuth) => {
 }
 
 // LogOut user
-const logOutuserIntoDB = async (token: string) => {
-  let decoded
+// const logOutuserIntoDB = async (token: string) => {
+const logOutuserIntoDB = async () => {
+  // let decoded
 
-  // checking if the given token is valid
-  try {
-    decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string
-    ) as JwtPayload
-  } catch (err) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'Unautorized')
-  }
+  // // checking if the given token is valid
+  // try {
+  //   decoded = jwt.verify(
+  //     token,
+  //     config.jwt_access_secret as string
+  //   ) as JwtPayload
+  // } catch (err) {
+  //   throw new AppError(httpStatus.UNAUTHORIZED, 'Unautorized')
+  // }
 
-  const { exp } = decoded
+  // const { exp } = decoded
 
-  const expireToken = exp ? new Date(exp * 1000) : new Date()
+  // const expireToken = exp ? new Date(exp * 1000) : new Date()
 
-  if (expireToken < new Date()) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'Token has expired')
-  }
+  // if (expireToken < new Date()) {
+  //   throw new AppError(httpStatus.UNAUTHORIZED, 'Token has expired')
+  // }
 
   return null
 }

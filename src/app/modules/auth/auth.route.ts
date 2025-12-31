@@ -26,7 +26,7 @@ router.post(
 // logout user route
 router.post(
   '/logout',
-  auth(),
+  // auth(),
   AuthController.logOutUser,
 )
 
