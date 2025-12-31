@@ -9,7 +9,8 @@ import { User } from '../modules/auth/auth.model'
 
 const auth = () => {
   return catchAsync(async (req, res, next) => {
-    const token = req.headers.authorization
+    // const token = req.headers.authorization
+    const token = req.cookies?.accessToken || req.headers.authorization
 
     // checking if the token is missing
     if (!token) {

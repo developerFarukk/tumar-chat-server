@@ -27,7 +27,7 @@ const logInUser = catchAsync(async (req, res) => {
   res.cookie('accessToken', accessToken, {
     maxAge: 1000 * 60 * 60 * 24 * 365,
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'none',
     secure: config.node_env === 'development' ? false : true,
   })
 
