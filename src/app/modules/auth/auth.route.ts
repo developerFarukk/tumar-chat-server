@@ -27,23 +27,26 @@ router.post(
 router.post(
   '/logout',
   // auth(),
-  AuthController.logOutUser,
+  AuthController.logOutUser
 )
+
+// check user
+router.get('/check', auth(), AuthController.checkUser)
 
 // Update User
 router.patch(
-    '/update-user',
-    auth(),
-    validateRequest(UserValidation.updateUserValidationSchema),
-    AuthController.updateUser
-);
+  '/update-user',
+  auth(),
+  validateRequest(UserValidation.updateUserValidationSchema),
+  AuthController.updateUser
+)
 
 // Change Password by user
 router.patch(
-    '/change-password', 
-    auth(),
-    validateRequest(UserValidation.userPasswordChangeValidationSchema),
-    AuthController.userPasswordChange
-);
+  '/change-password',
+  auth(),
+  validateRequest(UserValidation.userPasswordChangeValidationSchema),
+  AuthController.userPasswordChange
+)
 
 export const AuthRoutes = router

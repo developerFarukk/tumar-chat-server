@@ -65,7 +65,7 @@ const logOutUser = catchAsync(async (req, res) => {
     sameSite: 'strict',
     secure: config.node_env === 'development' ? false : true,
     path: '/',
-    expires: new Date(0)
+    expires: new Date(0),
   })
 
   sendResponse(res, {
@@ -74,6 +74,20 @@ const logOutUser = catchAsync(async (req, res) => {
     message: 'Logged out successfully',
     // data: result,
     data: null,
+  })
+})
+
+// Check User
+const checkUser = catchAsync(async (req, res) => {
+  const result = req.user as TJwtPayload
+
+  // const result = await AuthService.updateUserIntoDB(email, req.body)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Current User get succesfully',
+    data: result,
   })
 })
 
@@ -109,6 +123,7 @@ export const AuthController = {
   signUpUser,
   logInUser,
   logOutUser,
+  checkUser,
   updateUser,
   userPasswordChange,
 }
