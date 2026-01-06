@@ -182,6 +182,7 @@ export const socketAuthMiddleware = async (socket: any, next: any) => {
   console.log('Headers:', socket.handshake.headers)
   console.log('Cookies:', socket.handshake.headers.cookie)
   console.log('==============================')
+  console.log("- socket connected:", socket?.connected ? "✅ yes" : "❌ no");
 
   // টেস্টিং এর জন্য temporary user create করুন
   socket.userId = 'test-user-' + Date.now()
