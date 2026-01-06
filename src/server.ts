@@ -41,8 +41,10 @@ async function bootstrap() {
     //await seed();
 
     server = http.createServer(app)
+    
 
     initSocket(server)
+
 
     // server = app.listen(config.port, () => {
     //   console.log(`🚀 Application is running on port ${config.port}`)

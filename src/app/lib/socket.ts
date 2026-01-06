@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 import { Server as HTTPServer } from 'http'
@@ -5,42 +6,92 @@ import { Server } from 'socket.io'
 import config from '../config'
 import { socketAuthMiddleware } from '../middlewares/socket.auth.middleware'
 
-
 type UserSocketMap = Record<string, string>
 
 let io: Server
 const userSocketMap: UserSocketMap = {}
 
 export const initSocket = (server: HTTPServer) => {
+
+  // ✅ FIXED: CORS এবং transports যোগ করুন
   io = new Server(server, {
     cors: {
-      origin: config.client_url,
+      origin: config.client_url || 'http://localhost:3000',
       credentials: true,
     },
+    transports: ['websocket', 'polling'],
   })
-  
-  
 
   io.use(socketAuthMiddleware)
 
-//   console.log("io", socketAuthMiddleware);
-  
-
+  // ✅ Connection event handler
   io.on('connection', (socket: any) => {
-    console.log("A user connected", socket)
-    console.log('A user connected:', socket.user?.fullName)
+    console.log('\n' + '='.repeat(50))
+    console.log('🎉 NEW SOCKET CONNECTION ESTABLISHED')
+    console.log('='.repeat(50))
+    console.log('Socket ID:', socket.id)
+    console.log('User ID:', socket.userId)
+    console.log('User Name:', socket.user?.fullName)
+    console.log('='.repeat(50) + '\n')
 
-    const userId = socket.userId
-    userSocketMap[userId] = socket.id
+    // ✅ Fix: userId undefined check
+    const userId = socket.userId || socket.id
 
-    io.emit('getOnlineUsers', Object.keys(userSocketMap))
+    if (userId) {
+      userSocketMap[userId] = socket.id
+      console.log(`📝 User ${userId} mapped to socket ${socket.id}`)
+    }
 
+    // ✅ Send welcome message to client
+    socket.emit('welcome', {
+      message: 'Connected to chat server!',
+      userId: socket.userId,
+      socketId: socket.id,
+      serverTime: new Date().toISOString(),
+    })
+
+    // ✅ Send online users to ALL clients
+    const onlineUsers = Object.keys(userSocketMap)
+    console.log('👥 Online users:', onlineUsers)
+    io.emit('getOnlineUsers', onlineUsers)
+
+    // ✅ Test event handler যোগ করুন
+    socket.on('test', (data: any) => {
+      console.log('📩 Test event received:', data)
+      socket.emit('test-response', {
+        message: 'Server received your test message',
+        data: data,
+        timestamp: new Date().toISOString(),
+      })
+    })
+
+    // ✅ Handle ping/pong
+    socket.on('ping', () => {
+      socket.emit('pong', { time: Date.now() })
+    })
+
+    // ✅ Handle disconnect
     socket.on('disconnect', () => {
-      console.log('A user disconnected:', socket.user?.fullName)
-      delete userSocketMap[userId]
-      io.emit('getOnlineUsers', Object.keys(userSocketMap))
+      console.log('👋 User disconnected:', socket.id)
+
+      if (userId) {
+        delete userSocketMap[userId]
+        console.log(`🗑️ Removed user ${userId} from online list`)
+      }
+
+      // Update online users for all
+      const remainingUsers = Object.keys(userSocketMap)
+      console.log('👥 Remaining online users:', remainingUsers.length)
+      io.emit('getOnlineUsers', remainingUsers)
+    })
+
+    // ✅ Handle errors
+    socket.on('error', (error: any) => {
+      console.error('Socket error:', error)
     })
   })
+
+  console.log('🚀 Socket.io server ready for connections')
 }
 
 export const getReceiverSocketId = (userId: string) => {
