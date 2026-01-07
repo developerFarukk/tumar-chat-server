@@ -16,20 +16,37 @@ export interface TUser {
 }
 
 
+// export interface UserModel extends Model<TUser> {
+    
+//     isUserExistsByEmail(email: string): Promise<TUser>;
+
+    
+//     // checkUserExist(userId: string): Promise<TUser>;
+
+//     getPublicUserData(email: string): Promise<Pick<TUser, '_id' | 'name' | 'email' | 'number' | 'address' | 'image'>>;
+
+//     //instance methods for checking if passwords are matched
+//     isPasswordMatched(
+//         plainTextPassword: string,
+//         hashedPassword: string,
+//     ): Promise<boolean>;
+// }
+
 export interface UserModel extends Model<TUser> {
-    
-    isUserExistsByEmail(email: string): Promise<TUser>;
-    
-    // checkUserExist(userId: string): Promise<TUser>;
+  isUserExistsByEmail(email: string): Promise<TUser | null>;
 
-    getPublicUserData(email: string): Promise<Pick<TUser, '_id' | 'name' | 'email' | 'number' | 'address' | 'image'>>;
+  getPublicUserData(
+    email: string
+  ): Promise<
+    Pick<TUser, '_id' | 'name' | 'email' | 'number' | 'address' | 'image'>
+  >;
 
-    //instance methods for checking if passwords are matched
-    isPasswordMatched(
-        plainTextPassword: string,
-        hashedPassword: string,
-    ): Promise<boolean>;
+  isPasswordMatched(
+    plainTextPassword: string,
+    hashedPassword: string
+  ): Promise<boolean>;
 }
+
 
 
 export interface TAuth {

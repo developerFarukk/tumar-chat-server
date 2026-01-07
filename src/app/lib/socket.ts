@@ -91,7 +91,7 @@ export const initSocket = (server: HTTPServer) => {
     })
   })
 
-  console.log('🚀 Socket.io server ready for connections')
+  // console.log('🚀 Socket.io server ready for connections')
 }
 
 export const getReceiverSocketId = (userId: string) => {
