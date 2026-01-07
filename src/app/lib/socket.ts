@@ -24,7 +24,7 @@ export const initSocket = (server: HTTPServer) => {
 
   // ✅ Connection event handler
   io.on('connection', (socket: any) => {
-    // console.log("A user connected", socket.user.name);
+    console.log("A user connected", socket.user.name);
 
     // ✅ Fix: userId undefined check
     const userId = socket.userId.toString()
@@ -66,7 +66,7 @@ export const initSocket = (server: HTTPServer) => {
 
     // ✅ Handle disconnect
     socket.on('disconnect', () => {
-      // console.log('👋 User disconnected:', socket.user.name)
+      console.log('👋 User disconnected:', socket.user.name)
 
       if (userId) {
         delete userSocketMap[userId]

@@ -88,7 +88,7 @@ userSchema.pre('save', async function (next) {
 
 // Static method to check if user exists by email
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await this.findOne({ email }).select('-password')
+  return await this.findOne({ email }).select('+password')
 }
 
 // Static method to get public user data

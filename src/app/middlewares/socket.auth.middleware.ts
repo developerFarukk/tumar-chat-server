@@ -40,7 +40,7 @@ export const socketAuthMiddleware = async (socket: any, next: any) => {
 
     const { email } = decoded
 
-    const user = await User.isUserExistsByEmail(email)
+    const user = await User.getPublicUserData(email)
 
     if (!user) {
       return next(new AppError(httpStatus.NOT_FOUND, 'This user is not found!'))
