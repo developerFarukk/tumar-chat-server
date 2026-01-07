@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
 import { Server as HTTPServer } from 'http'
 import { Server } from 'socket.io'
 import config from '../config'
@@ -12,7 +11,6 @@ let io: Server
 const userSocketMap: UserSocketMap = {}
 
 export const initSocket = (server: HTTPServer) => {
-
   // ✅ FIXED: CORS এবং transports যোগ করুন
   io = new Server(server, {
     cors: {
@@ -26,44 +24,40 @@ export const initSocket = (server: HTTPServer) => {
 
   // ✅ Connection event handler
   io.on('connection', (socket: any) => {
-    console.log('\n' + '='.repeat(50))
-    console.log('🎉 NEW SOCKET CONNECTION ESTABLISHED')
-    console.log('='.repeat(50))
-    console.log('Socket ID:', socket.id)
-    console.log('User ID:', socket.userId)
-    console.log('User Name:', socket.user?.fullName)
-    console.log('='.repeat(50) + '\n')
+    // console.log("A user connected", socket.user.name);
 
     // ✅ Fix: userId undefined check
-    const userId = socket.userId || socket.id
+    const userId = socket.userId.toString()
+
+    // console.log("socket user is", userId);
 
     if (userId) {
       userSocketMap[userId] = socket.id
-      console.log(`📝 User ${userId} mapped to socket ${socket.id}`)
+      // console.log(`📝 User ${userId} mapped to socket ${socket.id}`)
     }
 
     // ✅ Send welcome message to client
-    socket.emit('welcome', {
-      message: 'Connected to chat server!',
-      userId: socket.userId,
-      socketId: socket.id,
-      serverTime: new Date().toISOString(),
-    })
+    // socket.emit('welcome', {
+    //   message: 'Connected to chat server!',
+    //   userId: socket.userId,
+    //   socketId: socket.id,
+    //   serverTime: new Date().toISOString(),
+    // })
 
     // ✅ Send online users to ALL clients
     const onlineUsers = Object.keys(userSocketMap)
-    console.log('👥 Online users:', onlineUsers)
+    // console.log('👥 Online users:', onlineUsers)
     io.emit('getOnlineUsers', onlineUsers)
 
     // ✅ Test event handler যোগ করুন
-    socket.on('test', (data: any) => {
-      console.log('📩 Test event received:', data)
-      socket.emit('test-response', {
-        message: 'Server received your test message',
-        data: data,
-        timestamp: new Date().toISOString(),
-      })
-    })
+    // socket.on('test', (data: any) => {
+    //   console.log('📩 Test event received:', data)
+    //   socket.emit('test-response', {
+    //     message: 'Server received your test message',
+    //     data: data,
+    //     timestamp: new Date().toISOString(),
+    //   })
+    // })
 
     // ✅ Handle ping/pong
     socket.on('ping', () => {
@@ -72,22 +66,24 @@ export const initSocket = (server: HTTPServer) => {
 
     // ✅ Handle disconnect
     socket.on('disconnect', () => {
-      console.log('👋 User disconnected:', socket.id)
+      // console.log('👋 User disconnected:', socket.user.name)
 
       if (userId) {
         delete userSocketMap[userId]
-        console.log(`🗑️ Removed user ${userId} from online list`)
+        // console.log(`🗑️ Removed user ${userId} from online list`)
       }
 
       // Update online users for all
       const remainingUsers = Object.keys(userSocketMap)
-      console.log('👥 Remaining online users:', remainingUsers.length)
+      // console.log('👥 Remaining online users:', remainingUsers.length)
       io.emit('getOnlineUsers', remainingUsers)
     })
 
-    // ✅ Handle errors
-    socket.on('error', (error: any) => {
-      console.error('Socket error:', error)
+    // ✅ Handle errorr
+    socket.on('error', (err: any) => {
+      // console.error('Socket runtime error:', err)
+      socket.emit('error_message', { message: `Something went wrong, ${err}` })
+      socket.disconnect(true)
     })
   })
 
