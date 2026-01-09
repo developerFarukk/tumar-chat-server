@@ -13,7 +13,7 @@ let server: http.Server
 // Database connection
 async function connectToDatabase() {
   try {
-    await mongoose.connect(config.database_url as string)
+    await mongoose.connect(config.mongodb_url as string)
     console.log('🛢 Database connected successfully')
   } catch (err) {
     console.error('Failed to connect to database:', err)
