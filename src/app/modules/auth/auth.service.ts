@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import config from '../../config'
 import AppError from '../../errors/AppError'
@@ -5,9 +6,9 @@ import { TAuth, TJwtPayload, TUser } from './auth.interface'
 import { User } from './auth.model'
 import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
-import { sendWelcomeEmail } from '../../email/emailHandlers'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import { sendWelcomeEmail } from '../../email/emailHandlers'
 
 // Signup user intro to DB
 const signupUserIntroDB = async (payload: TUser) => {
@@ -43,6 +44,40 @@ const signupUserIntroDB = async (payload: TUser) => {
 
   return result
 }
+
+// const signupUserIntroDB = async (payload: TUser) => {
+//   // 1️⃣ Email duplicate check
+//   const existingUser = await User.findOne({ email: payload.email })
+//   if (existingUser) {
+//     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Email is already registered')
+//   }
+
+//   // 2️⃣ Number duplicate check
+//   const existingNumber = await User.findOne({ number: payload.number })
+//   if (existingNumber) {
+//     throw new AppError(
+//       httpStatus.NOT_ACCEPTABLE,
+//       'Number is already registered'
+//     )
+//   }
+
+//   // 3️⃣ Create user
+//   const createdUser = await User.create(payload)
+
+//   // 4️⃣ Public user data
+//   const result = await User.getPublicUserData(createdUser.email)
+
+//   // 5️⃣ Fire-and-forget email (NON-BLOCKING)
+//   if (result && config.client_url) {
+//     sendWelcomeEmail(result.email, result.name, config.client_url).catch(
+//       (err) => {
+//         console.error('Welcome email failed:', err.message)
+//       }
+//     )
+//   }
+
+//   return result
+// }
 
 // login user
 const loginUserIntoDB = async (payload: TAuth) => {
@@ -132,7 +167,6 @@ const userPasswordChangeIntoDB = async (
   email: string,
   payload: { oldPassword: string; newPassword: string }
 ) => {
-
   const { oldPassword, newPassword } = payload
 
   // // Find the user by email and select the password field
