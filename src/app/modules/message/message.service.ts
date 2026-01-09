@@ -3,6 +3,7 @@ import { User } from '../auth/auth.model'
 import { TMessage } from './message.interface'
 import httpStatus from 'http-status'
 import { Message } from './message.model'
+import { getReceiverSocketId, io } from '../../lib/socket'
 
 // Get All Contacts Service
 const getAllContactsIntoDB = async (userId: string) => {
@@ -52,6 +53,11 @@ const sendMessageIntoDB = async (
   //       imageUrl = uploadResponse.secure_url;
   //     }
 
+  const receiverSocketId = getReceiverSocketId(receiverId)
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit('newMessage', newMessage)
+  }
+
   return newMessage
 }
 
@@ -80,11 +86,7 @@ const getChatePartnerIntoDB = async (loggedInUserId: string) => {
 }
 
 // Get message by user Id
-const getmessageByUserIdIntoDB = async (
-  myId: string,
-  userToChatId: string
-) => {
-
+const getmessageByUserIdIntoDB = async (myId: string, userToChatId: string) => {
   const messages = await Message.find({
     $or: [
       { senderId: myId, receiverId: userToChatId },

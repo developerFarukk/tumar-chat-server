@@ -24,7 +24,7 @@ export const initSocket = (server: HTTPServer) => {
 
   // ✅ Connection event handler
   io.on('connection', (socket: any) => {
-    console.log("A user connected", socket.user.name);
+    console.log('A user connected', socket.user.name)
 
     // ✅ Fix: userId undefined check
     const userId = socket.userId.toString()
