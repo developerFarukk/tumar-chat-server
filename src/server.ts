@@ -13,7 +13,10 @@ let server: http.Server
 // Database connection
 async function connectToDatabase() {
   try {
+    //  const databaseuri = await mongoose.connect(config.mongodb_url as string)
     await mongoose.connect(config.mongodb_url as string)
+    //  console.log("database", databaseuri.connections);
+
     console.log('🛢 Database connected successfully')
   } catch (err) {
     console.error('Failed to connect to database:', err)
@@ -41,10 +44,8 @@ async function bootstrap() {
     //await seed();
 
     server = http.createServer(app)
-    
 
     initSocket(server)
-
 
     // server = app.listen(config.port, () => {
     //   console.log(`🚀 Application is running on port ${config.port}`)
