@@ -34,12 +34,12 @@ const signupUserIntroDB = async (payload: TUser) => {
 
   const result = await User.getPublicUserData(publicUserData?.email)
 
-  if (!config.client_url) {
+  if (!config.client_url_local || !config.client_url_live_1 || !config.client_url_live_2 || !config.client_url_live_3) {
     throw new Error('Client URL is not configured')
   }
 
   if (result) {
-    await sendWelcomeEmail(result?.email, result?.name, config.client_url)
+    await sendWelcomeEmail(result?.email, result?.name, config.client_url_local || config.client_url_live_1 || config.client_url_live_2 || config.client_url_live_3)
   }
 
   return result

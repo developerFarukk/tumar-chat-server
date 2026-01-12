@@ -15,7 +15,7 @@ export const initSocket = (server: HTTPServer) => {
   // ✅ FIXED: CORS এবং transports যোগ করুন
   io = new Server(server, {
     cors: {
-      origin: config.client_url || 'http://localhost:3000',
+      origin: config.client_url_local || config.client_url_live_1 || config.client_url_live_2 || config.client_url_live_3,
       credentials: true,
     },
     transports: ['websocket', 'polling'],

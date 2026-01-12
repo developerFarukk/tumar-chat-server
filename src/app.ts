@@ -8,6 +8,7 @@ import router from './app/routes'
 import cookieParser from 'cookie-parser'
 import os from 'os'
 import { StatusCodes } from 'http-status-codes'
+import config from './app/config'
 
 const app: Application = express()
 
@@ -15,7 +16,14 @@ const app: Application = express()
 app.use(express.json())
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://tumar-chat-server.onrender.com'],
+    origin: [
+      config.client_url_local,
+      config.client_url_live_1,
+      config.client_url_live_2,
+      config.client_url_live_3,
+      config.server_url_local,
+      config.server_url_live,
+    ],
     // origin: [config.client_url],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],

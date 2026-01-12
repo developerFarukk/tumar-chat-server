@@ -4,31 +4,36 @@ import path from 'path'
 dotenv.config({ path: path.join(process.cwd(), '.env') })
 
 export default {
-    node_env: process.env.NODE_ENV,
-    database_url: process.env.DATABASE_URL,
-    port: process.env.PORT,
-    bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
+  node_env: process.env.NODE_ENV,
+  database_url: process.env.DATABASE_URL,
+  port: process.env.PORT,
+  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
 
-    jwt_access_secret: process.env.JWT_ACCESS_SECRET,
-    jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
+  jwt_access_secret: process.env.JWT_ACCESS_SECRET,
+  jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
 
-    jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
-    jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
+  jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
+  jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
 
-    client_url: process.env.CLIENT_URL,
+  client_url_local: process.env.CLIENT_URL_LOCAL as string,
+  client_url_live_1: process.env.CLIENT_URL_LIVE_1 as string,
+  client_url_live_2: process.env.CLIENT_URL_LIVE_2 as string,
+  client_url_live_3: process.env.CLIENT_URL_LIVE_3 as string,
 
-    resend_api_key: process.env.RESEND_API_KEY,
+  server_url_local: process.env.SERVER_URL_LOCAL as string,
+  server_url_live: process.env.SERVER_URL_LIVE as string,
 
-    email_from: process.env.EMAIL_FROM,
-    email_from_name: process.env.EMAIL_FROM_NAME,
+  resend_api_key: process.env.RESEND_API_KEY,
 
-    cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
-    cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+  email_from: process.env.EMAIL_FROM,
+  email_from_name: process.env.EMAIL_FROM_NAME,
 
-    arcjet_api_key: process.env.ARCJET_API_KEY,
-    arcjet_environment: process.env.ARCJET_ENVIRONMENT,
+  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
 
+  arcjet_api_key: process.env.ARCJET_API_KEY,
+  arcjet_environment: process.env.ARCJET_ENVIRONMENT,
 }
 
 // import dotenv from 'dotenv'
