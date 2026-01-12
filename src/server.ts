@@ -14,7 +14,7 @@ let server: http.Server
 async function connectToDatabase() {
   try {
     //  const databaseuri = await mongoose.connect(config.mongodb_url as string)
-    await mongoose.connect(config.mongodb_url as string)
+    await mongoose.connect(config.database_url as string)
     //  console.log("database", databaseuri.connections);
 
     console.log('🛢 Database connected successfully')
