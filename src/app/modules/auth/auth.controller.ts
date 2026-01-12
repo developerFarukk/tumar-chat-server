@@ -24,11 +24,20 @@ const logInUser = catchAsync(async (req, res) => {
 
   const accessToken = result?.AccessToken
 
+  // **(Http)** Local client side testing cookige function
+  // res.cookie('accessToken', accessToken, {
+  //   maxAge: 1000 * 60 * 60 * 24 * 365,
+  //   httpOnly: true,
+  //   sameSite: 'strict',
+  //   secure: config.node_env === 'development' ? false : true,
+  // })
+
+    // **(Https)**  Live client side testing cookige function
   res.cookie('accessToken', accessToken, {
     maxAge: 1000 * 60 * 60 * 24 * 365,
     httpOnly: true,
-    sameSite: 'strict',
-    secure: config.node_env === 'development' ? false : true,
+    sameSite: 'none',
+    secure: true,
   })
 
   sendResponse(res, {
